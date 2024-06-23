@@ -1,0 +1,14 @@
+args:
+  ignore:
+    - flutter/.idea
+    - flutter/.dart_tool
+    - flutter/build
+    - flutter/dist
+    - flutter/windows
+    - flutter/android
+    - flutter/linux
+    - flutter/ios
+    - flutter/macos
+    - flutter/.
+    - flutter/flutter_run.sh
+    - flutter/lib/config.dart
