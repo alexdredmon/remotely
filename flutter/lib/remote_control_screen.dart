@@ -53,9 +53,17 @@ class RemoteControlScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    RokuButton(onPressed: () => _sendCommand('Power'), child: const Text('Power')),
+                    RokuButton(
+                      onPressed: () => _sendCommand('Back'),
+                      child: const Text('Back'),
+                    ),
                     RokuButton(onPressed: () => _sendCommand('Home'), child: const Text('Home')),
-                    RokuButton(onPressed: () => _sendCommand('Back'), child: const Text('Back')),
+                    RokuButton(
+                      onPressed: () => _sendCommand('Power'),
+                      child: const Text('Power'),
+                      backgroundColor: Colors.red[900],
+                      foregroundColor: Colors.white,
+                    ),
                   ],
                 ),
               ),

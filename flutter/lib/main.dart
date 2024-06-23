@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Roku Remote',
+      title: 'Remotely',
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Colors.black,
         appBarTheme: AppBarTheme(
@@ -88,7 +88,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Roku Device'),
+        title: const Text('Select Device'),
       ),
       body: Column(
         children: [
@@ -101,7 +101,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
             ),
           Expanded(
             child: _devices.isEmpty
-                ? Center(child: Text('No Roku devices found'))
+                ? Center(child: Text('No devices found'))
                 : ListView.builder(
                     itemCount: _devices.length,
                     itemBuilder: (context, index) {
@@ -130,7 +130,8 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _discoverDevices,
         tooltip: 'Refresh',
-        child: const Icon(Icons.refresh),
+        child: const Icon(Icons.refresh, color: Colors.white),
+        backgroundColor: Colors.blueGrey[800],
       ),
     );
   }

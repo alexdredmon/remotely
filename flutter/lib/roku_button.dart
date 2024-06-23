@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 class RokuButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Widget child;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
 
   const RokuButton({
     Key? key,
     required this.onPressed,
     required this.child,
+    this.backgroundColor,
+    this.foregroundColor,
   }) : super(key: key);
 
   @override
@@ -19,11 +23,9 @@ class RokuButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.all(16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          backgroundColor: Colors.blueGrey[800],
-          foregroundColor: Colors.white,
+          shape: CircleBorder(),
+          backgroundColor: backgroundColor ?? Colors.blueGrey[800],
+          foregroundColor: foregroundColor ?? Colors.white,
         ),
         child: FittedBox(
           fit: BoxFit.contain,
