@@ -37,10 +37,10 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
   @override
   void initState() {
     super.initState();
-    _discoverDevices();
+    _loadDevices();
   }
 
-  Future<void> _discoverDevices() async {
+  Future<void> _loadDevices() async {
     setState(() {
       _isLoading = true;
       _error = null;
@@ -60,6 +60,13 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _deleteDevice(RokuDevice device) async {
+    await RokuService.deleteDevice(device);
+    setState(() {
+      _devices.removeWhere((d) => d.ip == device.ip && d.name == device.name);
+    });
   }
 
   @override
@@ -82,6 +89,10 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                         return ListTile(
                           title: Text(device.name),
                           subtitle: Text(device.ip),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () => _deleteDevice(device),
+                          ),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -94,7 +105,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                       },
                     ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _discoverDevices,
+        onPressed: _loadDevices,
         tooltip: 'Refresh',
         child: const Icon(Icons.refresh),
       ),

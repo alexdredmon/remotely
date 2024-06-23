@@ -2,15 +2,28 @@ import 'dart:async';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class RokuDevice {
   final String ip;
   final String name;
 
   RokuDevice(this.ip, this.name);
+
+  Map<String, dynamic> toJson() => {
+    'ip': ip,
+    'name': name,
+  };
+
+  factory RokuDevice.fromJson(Map<String, dynamic> json) {
+    return RokuDevice(json['ip'], json['name']);
+  }
 }
 
 class RokuService {
+  static const String _cachedDevicesKey = 'cached_roku_devices';
+
   static Future<String?> getLocalIpAddress() async {
     try {
       final interfaces = await NetworkInterface.list(type: InternetAddressType.IPv4, includeLinkLocal: false);
@@ -27,7 +40,8 @@ class RokuService {
     return null;
   }
 
-  static Future<List<RokuDevice>> discoverDevices() async {
+  static Future<List<RokuDevice>> discoverDevices({int timeout = 5000, int retries = 3}) async {
+    final cachedDevices = await _getCachedDevices();
     final localIp = await getLocalIpAddress();
     if (localIp == null) {
       print('Failed to get local IP address');
@@ -37,33 +51,62 @@ class RokuService {
     print('Local IP: $localIp');
     print('Subnet: $subnet');
 
-    List<RokuDevice> devices = [];
+    List<RokuDevice> newDevices = [];
     List<Future> futures = [];
 
-    for (int i = 1; i < 255; i++) {
-      final ip = '$subnet.$i';
-      futures.add(checkDevice(ip).then((device) {
-        if (device != null) {
-          devices.add(device);
-          print('Found Roku device: ${device.name} at ${device.ip}');
+    for (int attempt = 0; attempt < retries; attempt++) {
+      print('Discovery attempt ${attempt + 1} of $retries');
+      futures.clear();
+
+      for (int i = 1; i < 255; i++) {
+        final ip = '$subnet.$i';
+        futures.add(checkDevice(ip, timeout: timeout).then((device) {
+          if (device != null) {
+            newDevices.add(device);
+            print('Found Roku device: ${device.name} at ${device.ip}');
+          }
+        }));
+      }
+
+      try {
+        await Future.wait(futures);
+        if (newDevices.isNotEmpty) {
+          break;
         }
-      }));
+      } catch (e) {
+        print('Error during device discovery attempt ${attempt + 1}: $e');
+      }
+
+      if (attempt < retries - 1) {
+        print('Retrying device discovery...');
+        await Future.delayed(Duration(seconds: 1));
+      }
     }
 
-    try {
-      await Future.wait(futures);
-    } catch (e) {
-      print('Error during device discovery: $e');
+    // Merge new devices with cached devices
+    List<RokuDevice> allDevices = [...cachedDevices];
+    for (var newDevice in newDevices) {
+      int existingIndex = allDevices.indexWhere((device) => device.name == newDevice.name);
+      if (existingIndex != -1) {
+        // Update IP if it has changed
+        if (allDevices[existingIndex].ip != newDevice.ip) {
+          allDevices[existingIndex] = newDevice;
+        }
+      } else {
+        // Add new device
+        allDevices.add(newDevice);
+      }
     }
 
-    print('Found ${devices.length} Roku devices');
-    return devices;
+    await _cacheDevices(allDevices);
+    print('Total devices (including cached): ${allDevices.length}');
+    return allDevices;
   }
 
-  static Future<RokuDevice?> checkDevice(String ip) async {
+  static Future<RokuDevice?> checkDevice(String ip, {int timeout = 5000}) async {
     try {
       final response = await http.get(Uri.parse('http://$ip:8060/query/device-info'))
-          .timeout(Duration(milliseconds: 500));
+          .timeout(Duration(milliseconds: timeout));
       if (response.statusCode == 200) {
         final deviceInfo = xml.XmlDocument.parse(response.body);
         final friendlyName = deviceInfo.findAllElements('friendly-device-name').firstOrNull?.text ?? 'Unknown Roku';
@@ -71,9 +114,9 @@ class RokuService {
         return RokuDevice(ip, friendlyName);
       }
     } on TimeoutException {
-      // print('Timeout checking device at $ip');
+      print('Timeout checking device at $ip');
     } on SocketException {
-      // print('Socket exception checking device at $ip');
+      print('Socket exception checking device at $ip');
     } catch (e) {
       print('Error checking device at $ip: $e');
     }
@@ -87,5 +130,27 @@ class RokuService {
     } catch (e) {
       print('Error sending command $command to $ip: $e');
     }
+  }
+
+  static Future<List<RokuDevice>> _getCachedDevices() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? deviceJson = prefs.getString(_cachedDevicesKey);
+    if (deviceJson != null) {
+      final List<dynamic> deviceList = json.decode(deviceJson);
+      return deviceList.map((device) => RokuDevice.fromJson(device)).toList();
+    }
+    return [];
+  }
+
+  static Future<void> _cacheDevices(List<RokuDevice> devices) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String deviceJson = json.encode(devices.map((device) => device.toJson()).toList());
+    await prefs.setString(_cachedDevicesKey, deviceJson);
+  }
+
+  static Future<void> deleteDevice(RokuDevice device) async {
+    List<RokuDevice> devices = await _getCachedDevices();
+    devices.removeWhere((d) => d.ip == device.ip && d.name == device.name);
+    await _cacheDevices(devices);
   }
 }
