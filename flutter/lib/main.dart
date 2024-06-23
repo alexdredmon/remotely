@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'roku_service.dart';
 
 void main() {
@@ -117,53 +118,136 @@ class RemoteControlScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(device.name),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () => _sendCommand('VolumeUp'),
-                  child: const Text('Volume Up'),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () => _sendCommand('VolumeDown'),
-                  child: const Text('Volume Down'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _sendCommand('Up'),
-              child: const Icon(Icons.arrow_upward),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () => _sendCommand('Left'),
-                  child: const Icon(Icons.arrow_back),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () => _sendCommand('Select'),
-                  child: const Text('OK'),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () => _sendCommand('Right'),
-                  child: const Icon(Icons.arrow_forward),
-                ),
-              ],
-            ),
-            ElevatedButton(
-              onPressed: () => _sendCommand('Down'),
-              child: const Icon(Icons.arrow_downward),
-            ),
-          ],
+      body: Focus(
+        autofocus: true,
+        onKey: (node, event) {
+          if (event is RawKeyDownEvent) {
+            switch (event.logicalKey) {
+              case LogicalKeyboardKey.arrowUp:
+                _sendCommand('Up');
+                return KeyEventResult.handled;
+              case LogicalKeyboardKey.arrowDown:
+                _sendCommand('Down');
+                return KeyEventResult.handled;
+              case LogicalKeyboardKey.arrowLeft:
+                _sendCommand('Left');
+                return KeyEventResult.handled;
+              case LogicalKeyboardKey.arrowRight:
+                _sendCommand('Right');
+                return KeyEventResult.handled;
+              case LogicalKeyboardKey.enter:
+                _sendCommand('Select');
+                return KeyEventResult.handled;
+              case LogicalKeyboardKey.backspace:
+                _sendCommand('Back');
+                return KeyEventResult.handled;
+            }
+          }
+          return KeyEventResult.ignored;
+        },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('Power'),
+                    child: const Text('Power'),
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('Home'),
+                    child: const Text('Home'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('Back'),
+                    child: const Text('Back'),
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('InstantReplay'),
+                    child: const Icon(Icons.replay),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => _sendCommand('Up'),
+                child: const Icon(Icons.arrow_upward),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('Left'),
+                    child: const Icon(Icons.arrow_back),
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('Select'),
+                    child: const Text('OK'),
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('Right'),
+                    child: const Icon(Icons.arrow_forward),
+                  ),
+                ],
+              ),
+              ElevatedButton(
+                onPressed: () => _sendCommand('Down'),
+                child: const Icon(Icons.arrow_downward),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('VolumeDown'),
+                    child: const Icon(Icons.volume_down),
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('VolumeMute'),
+                    child: const Icon(Icons.volume_mute),
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('VolumeUp'),
+                    child: const Icon(Icons.volume_up),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('Rev'),
+                    child: const Icon(Icons.fast_rewind),
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('Play'),
+                    child: const Icon(Icons.play_arrow),
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () => _sendCommand('Fwd'),
+                    child: const Icon(Icons.fast_forward),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
