@@ -41,7 +41,7 @@ class RokuService {
   }
 
   static Future<List<RokuDevice>> discoverDevices({int timeout = 5000, int retries = 3}) async {
-    final cachedDevices = await _getCachedDevices();
+    final cachedDevices = await getCachedDevices();
     final localIp = await getLocalIpAddress();
     if (localIp == null) {
       print('Failed to get local IP address');
@@ -132,7 +132,7 @@ class RokuService {
     }
   }
 
-  static Future<List<RokuDevice>> _getCachedDevices() async {
+  static Future<List<RokuDevice>> getCachedDevices() async {
     final prefs = await SharedPreferences.getInstance();
     final String? deviceJson = prefs.getString(_cachedDevicesKey);
     if (deviceJson != null) {
@@ -149,7 +149,7 @@ class RokuService {
   }
 
   static Future<void> deleteDevice(RokuDevice device) async {
-    List<RokuDevice> devices = await _getCachedDevices();
+    List<RokuDevice> devices = await getCachedDevices();
     devices.removeWhere((d) => d.ip == device.ip && d.name == device.name);
     await _cacheDevices(devices);
   }
