@@ -110,7 +110,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                         title: Text(device.name),
                         subtitle: Text(device.ip),
                         trailing: IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: Icon(Icons.delete, color: Colors.red[300]),
                           onPressed: () => _deleteDevice(device),
                         ),
                         onTap: () {
@@ -132,6 +132,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
         tooltip: 'Refresh',
         child: const Icon(Icons.refresh, color: Colors.white),
         backgroundColor: Colors.blueGrey[800],
+        shape: CircleBorder(),
       ),
     );
   }
