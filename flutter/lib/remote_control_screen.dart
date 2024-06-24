@@ -55,14 +55,13 @@ class RemoteControlScreen extends StatelessWidget {
                   children: [
                     RokuButton(
                       onPressed: () => _sendCommand('Back'),
-                      child: const Text('Back'),
+                      child: const Icon(Icons.west),
                     ),
                     RokuButton(onPressed: () => _sendCommand('Home'), child: const Text('Home')),
                     RokuButton(
                       onPressed: () => _sendCommand('Power'),
                       child: const Text('Power'),
-                      backgroundColor: Colors.red[900],
-                      foregroundColor: Colors.white,
+                      isPowerButton: true,
                     ),
                   ],
                 ),
@@ -71,23 +70,41 @@ class RemoteControlScreen extends StatelessWidget {
             Expanded(
               flex: 4,
               child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    RokuButton(onPressed: () => _sendCommand('Up'), child: const Icon(Icons.arrow_upward)),
-                    SizedBox(height: 10),
-                    Row(
+                    // Left side (Arrow keys / OK)
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        RokuButton(onPressed: () => _sendCommand('Left'), child: const Icon(Icons.arrow_back)),
-                        SizedBox(width: 20),
-                        RokuButton(onPressed: () => _sendCommand('Select'), child: const Text('OK')),
-                        SizedBox(width: 20),
-                        RokuButton(onPressed: () => _sendCommand('Right'), child: const Icon(Icons.arrow_forward)),
+                        RokuButton(onPressed: () => _sendCommand('Up'), child: const Icon(Icons.arrow_upward)),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RokuButton(onPressed: () => _sendCommand('Left'), child: const Icon(Icons.arrow_back)),
+                            SizedBox(width: 20),
+                            RokuButton(onPressed: () => _sendCommand('Select'), child: const Text('OK')),
+                            SizedBox(width: 20),
+                            RokuButton(onPressed: () => _sendCommand('Right'), child: const Icon(Icons.arrow_forward)),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        RokuButton(onPressed: () => _sendCommand('Down'), child: const Icon(Icons.arrow_downward)),
                       ],
                     ),
-                    SizedBox(height: 10),
-                    RokuButton(onPressed: () => _sendCommand('Down'), child: const Icon(Icons.arrow_downward)),
+                    SizedBox(width: 60), // Margin between the two columns
+                    // Right side (Volume buttons)
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        RokuButton(onPressed: () => _sendCommand('VolumeUp'), child: const Icon(Icons.volume_up)),
+                        SizedBox(height: 10),
+                        RokuButton(onPressed: () => _sendCommand('VolumeDown'), child: const Icon(Icons.volume_down)),
+                        SizedBox(height: 10),
+                        RokuButton(onPressed: () => _sendCommand('VolumeMute'), child: const Icon(Icons.volume_mute)),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -95,26 +112,12 @@ class RemoteControlScreen extends StatelessWidget {
             Expanded(
               flex: 3,
               child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        RokuButton(onPressed: () => _sendCommand('VolumeDown'), child: const Icon(Icons.volume_down)),
-                        RokuButton(onPressed: () => _sendCommand('VolumeMute'), child: const Icon(Icons.volume_mute)),
-                        RokuButton(onPressed: () => _sendCommand('VolumeUp'), child: const Icon(Icons.volume_up)),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        RokuButton(onPressed: () => _sendCommand('Rev'), child: const Icon(Icons.fast_rewind)),
-                        RokuButton(onPressed: () => _sendCommand('Play'), child: const Icon(Icons.play_arrow)),
-                        RokuButton(onPressed: () => _sendCommand('Fwd'), child: const Icon(Icons.fast_forward)),
-                      ],
-                    ),
+                    RokuButton(onPressed: () => _sendCommand('Rev'), child: const Icon(Icons.fast_rewind)),
+                    RokuButton(onPressed: () => _sendCommand('Play'), child: const Icon(Icons.play_arrow)),
+                    RokuButton(onPressed: () => _sendCommand('Fwd'), child: const Icon(Icons.fast_forward)),
                   ],
                 ),
               ),

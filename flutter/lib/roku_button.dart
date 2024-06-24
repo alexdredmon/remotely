@@ -5,6 +5,7 @@ class RokuButton extends StatelessWidget {
   final Widget child;
   final Color? backgroundColor;
   final Color? foregroundColor;
+  final bool isPowerButton;
 
   const RokuButton({
     Key? key,
@@ -12,6 +13,7 @@ class RokuButton extends StatelessWidget {
     required this.child,
     this.backgroundColor,
     this.foregroundColor,
+    this.isPowerButton = false,
   }) : super(key: key);
 
   @override
@@ -19,18 +21,37 @@ class RokuButton extends StatelessWidget {
     return SizedBox(
       width: 80,
       height: 80,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.all(16),
-          shape: CircleBorder(),
-          backgroundColor: backgroundColor ?? Colors.blueGrey[800],
-          foregroundColor: foregroundColor ?? Colors.white,
-        ),
-        child: FittedBox(
-          fit: BoxFit.contain,
-          child: child,
-        ),
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                center: Alignment.center,
+                radius: 0.5,
+                colors: isPowerButton
+                    ? [Colors.red[900]!, Colors.red[800]!]
+                    : [Colors.blueGrey[900]!, Colors.blueGrey[900]!],
+                stops: [0.0, 1.0],
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onPressed,
+                customBorder: CircleBorder(),
+                child: Center(
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: child,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

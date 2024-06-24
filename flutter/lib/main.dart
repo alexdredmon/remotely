@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'roku_service.dart';
 import 'remote_control_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const MyApp());
 }
 
@@ -77,6 +80,42 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
     }
   }
 
+  Future<void> _confirmDeleteDevice(RokuDevice device) async {
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('❌ Confirm Delete'),
+          content: Text('Are you sure you want to delete device ${device.name}?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white)
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.white)
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      await _deleteDevice(device);
+    }
+  }
+
   Future<void> _deleteDevice(RokuDevice device) async {
     await RokuService.deleteDevice(device);
     setState(() {
@@ -110,8 +149,8 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                         title: Text(device.name),
                         subtitle: Text(device.ip),
                         trailing: IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red[300]),
-                          onPressed: () => _deleteDevice(device),
+                          icon: Icon(Icons.delete, color: Colors.red[400]),
+                          onPressed: () => _confirmDeleteDevice(device),
                         ),
                         onTap: () {
                           Navigator.push(
