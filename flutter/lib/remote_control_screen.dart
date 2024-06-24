@@ -57,10 +57,10 @@ class RemoteControlScreen extends StatelessWidget {
                       onPressed: () => _sendCommand('Back'),
                       child: const Icon(Icons.west),
                     ),
-                    RokuButton(onPressed: () => _sendCommand('Home'), child: const Text('Home')),
+                    RokuButton(onPressed: () => _sendCommand('Home'), child: const Icon(Icons.home)),
                     RokuButton(
                       onPressed: () => _sendCommand('Power'),
-                      child: const Text('Power'),
+                      child: const Icon(Icons.power_settings_new),
                       isPowerButton: true,
                     ),
                   ],
@@ -93,7 +93,6 @@ class RemoteControlScreen extends StatelessWidget {
                         RokuButton(onPressed: () => _sendCommand('Down'), child: const Icon(Icons.arrow_downward)),
                       ],
                     ),
-                    SizedBox(width: 60), // Margin between the two columns
                     // Right side (Volume buttons)
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
