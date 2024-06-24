@@ -132,6 +132,25 @@ class RokuService {
     }
   }
 
+  static Future<void> sendLiteralCommand(String ip, String text) async {
+    try {
+      for (int i = 0; i < text.length; i++) {
+        final char = text[i];
+        final encodedChar = Uri.encodeComponent(char);
+        final response = await http.post(Uri.parse('http://$ip:8060/keypress/Lit_$encodedChar'));
+        print('Sent literal command "$char" to $ip. Response: ${response.statusCode}');
+        if (response.statusCode != 200) {
+          throw Exception('Failed to send character: $char. Status code: ${response.statusCode}');
+        }
+        // Add a small delay between requests to avoid overwhelming the device
+        await Future.delayed(Duration(milliseconds: 100));
+      }
+      print('Successfully sent all characters of "$text" to $ip');
+    } catch (e) {
+      print('Error sending literal command "$text" to $ip: $e');
+    }
+  }
+
   static Future<List<RokuDevice>> getCachedDevices() async {
     final prefs = await SharedPreferences.getInstance();
     final String? deviceJson = prefs.getString(_cachedDevicesKey);
@@ -152,5 +171,17 @@ class RokuService {
     List<RokuDevice> devices = await getCachedDevices();
     devices.removeWhere((d) => d.ip == device.ip && d.name == device.name);
     await _cacheDevices(devices);
+  }
+
+  // New method to add a device
+  static Future<void> addDevice(RokuDevice newDevice) async {
+    List<RokuDevice> devices = await getCachedDevices();
+    devices.add(newDevice);
+    await _cacheDevices(devices);
+  }
+
+  // New method to save device order
+  static Future<void> saveDeviceOrder(List<RokuDevice> orderedDevices) async {
+    await _cacheDevices(orderedDevices);
   }
 }

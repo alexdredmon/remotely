@@ -26,6 +26,20 @@ class MyApp extends StatelessWidget {
           primary: Colors.blueGrey[800]!,
           secondary: Colors.blueGrey[600]!,
         ),
+        inputDecorationTheme: InputDecorationTheme(
+          labelStyle: TextStyle(color: Colors.white),
+          hintStyle: TextStyle(color: Colors.white70),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+        ),
+        textTheme: TextTheme(
+          bodyText1: TextStyle(color: Colors.white),
+          bodyText2: TextStyle(color: Colors.white),
+        ),
       ),
       home: const DeviceListScreen(),
     );
@@ -123,6 +137,32 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
     });
   }
 
+  void _addDevice() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddDeviceScreen(
+          onDeviceAdded: (RokuDevice newDevice) {
+            setState(() {
+              _devices.add(newDevice);
+            });
+            RokuService.addDevice(newDevice);
+          },
+        ),
+      ),
+    );
+  }
+
+  void _reorderDevices(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) {
+        newIndex -= 1;
+      }
+      final RokuDevice item = _devices.removeAt(oldIndex);
+      _devices.insert(newIndex, item);
+    });
+    RokuService.saveDeviceOrder(_devices);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,16 +181,22 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
           Expanded(
             child: _devices.isEmpty
                 ? Center(child: Text('No devices found'))
-                : ListView.builder(
-                    itemCount: _devices.length,
-                    itemBuilder: (context, index) {
-                      final device = _devices[index];
+                : ReorderableListView(
+                    onReorder: _reorderDevices,
+                    children: _devices.map((device) {
                       return ListTile(
+                        key: ValueKey(device),
                         title: Text(device.name),
                         subtitle: Text(device.ip),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red[400]),
-                          onPressed: () => _confirmDeleteDevice(device),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red[400]),
+                              onPressed: () => _confirmDeleteDevice(device),
+                            ),
+                            Icon(Icons.drag_handle),
+                          ],
                         ),
                         onTap: () {
                           Navigator.push(
@@ -161,17 +207,119 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                           );
                         },
                       );
-                    },
+                    }).toList(),
                   ),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _discoverDevices,
-        tooltip: 'Refresh',
-        child: const Icon(Icons.refresh, color: Colors.white),
-        backgroundColor: Colors.blueGrey[800],
-        shape: CircleBorder(),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: _addDevice,
+            tooltip: 'Add Device',
+            child: const Icon(Icons.add, color: Colors.white),
+            backgroundColor: Colors.blueGrey[800],
+            shape: CircleBorder(),
+            heroTag: null,
+          ),
+          SizedBox(height: 16),
+          FloatingActionButton(
+            onPressed: _discoverDevices,
+            tooltip: 'Refresh',
+            child: const Icon(Icons.refresh, color: Colors.white),
+            backgroundColor: Colors.blueGrey[800],
+            shape: CircleBorder(),
+            heroTag: null,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AddDeviceScreen extends StatefulWidget {
+  final Function(RokuDevice) onDeviceAdded;
+
+  const AddDeviceScreen({Key? key, required this.onDeviceAdded}) : super(key: key);
+
+  @override
+  _AddDeviceScreenState createState() => _AddDeviceScreenState();
+}
+
+class _AddDeviceScreenState extends State<AddDeviceScreen> {
+  final _formKey = GlobalKey<FormState>();
+  String _deviceName = '';
+  String _ipAddress = '';
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      final newDevice = RokuDevice(_ipAddress, _deviceName);
+      widget.onDeviceAdded(newDevice);
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add Device'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Device Name',
+                  hintText: 'Enter device name',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a device name';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _deviceName = value!;
+                },
+                style: TextStyle(color: Colors.white),
+              ),
+              SizedBox(height: 16),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'IP Address',
+                  hintText: 'Enter IP address',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an IP address';
+                  }
+                  // You can add more sophisticated IP address validation here
+                  return null;
+                },
+                onSaved: (value) {
+                  _ipAddress = value!;
+                },
+                style: TextStyle(color: Colors.white),
+              ),
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: _submitForm,
+                child: Text('Add Device', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueGrey[800],
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

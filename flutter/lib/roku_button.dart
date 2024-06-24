@@ -31,7 +31,9 @@ class RokuButton extends StatelessWidget {
                 radius: 0.5,
                 colors: isPowerButton
                     ? [Colors.red[900]!, Colors.red[800]!]
-                    : [Colors.blueGrey[900]!, Colors.blueGrey[900]!],
+                    : backgroundColor != null
+                        ? [backgroundColor!, backgroundColor!.withOpacity(0.8)]
+                        : [Colors.blueGrey[900]!, Colors.blueGrey[800]!],
                 stops: [0.0, 1.0],
               ),
             ),
