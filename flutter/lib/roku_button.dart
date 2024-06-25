@@ -26,16 +26,9 @@ class RokuButton extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: RadialGradient(
-                center: Alignment.center,
-                radius: 0.5,
-                colors: isPowerButton
-                    ? [Colors.red[900]!, Colors.red[800]!]
-                    : backgroundColor != null
-                        ? [backgroundColor!, backgroundColor!.withOpacity(0.8)]
-                        : [Colors.blueGrey[900]!, Colors.blueGrey[800]!],
-                stops: [0.0, 1.0],
-              ),
+              color: isPowerButton
+                  ? Colors.red[800]
+                  : backgroundColor ?? Colors.blueGrey[800],
             ),
           ),
           Positioned.fill(
