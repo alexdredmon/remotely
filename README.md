@@ -12,4 +12,9 @@ Detect/add, save, and control the Roku devices on your network.
   ><img src="/flutter/assets/app_store.png" alt="Download on the App Store" height="75" /></a>
 </p>
 
-![Demo 1](/flutter/assets/demo1.jpg)
+<p align="center">
+  <img src="/flutter/assets/demo1.jpg" alt="CrayEye Demo 1" width="32%"/>
+  <img src="/flutter/assets/demo2.jpg" alt="CrayEye Demo 2" width="32%"/>
+  <img src="/flutter/assets/demo3.jpg" alt="CrayEye Demo 3" width="32%"/>
+</p>
+
