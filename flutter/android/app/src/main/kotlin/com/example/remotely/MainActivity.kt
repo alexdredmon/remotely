@@ -1,4 +1,4 @@
-package com.example.remotely
+package com.remotely.app
 
 import io.flutter.embedding.android.FlutterActivity
 
