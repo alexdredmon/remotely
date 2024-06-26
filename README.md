@@ -1,7 +1,8 @@
-![Remotely](/logo.jpg)
+<img src="/logo.jpg" style="border-radius: 100px" alt="Remotely Controller Logo" />
+
 # Remotely Controller
 
-Detect/add, save, and control the Roku devices on your network.
+Detect, add, save, and control the Roku devices on your network.
 
 ## Install
 
