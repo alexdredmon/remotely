@@ -180,11 +180,6 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                   onPressed: () => _showTextInputBottomSheet(context),
                   child: const Text('abc', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
-                RokuButton(
-                  onPressed: () => _sendCommand('VolumeUp'),
-                  child: const Icon(Icons.volume_up),
-                  backgroundColor: Colors.amber[800],
-                ),
               ],
             ),
             Row(
@@ -193,17 +188,17 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                 RokuButton(onPressed: () => _sendCommand('Rev'), child: const Icon(Icons.fast_rewind)),
                 RokuButton(onPressed: () => _sendCommand('Play'), child: const Icon(Icons.play_arrow)),
                 RokuButton(onPressed: () => _sendCommand('Fwd'), child: const Icon(Icons.fast_forward)),
-                RokuButton(
-                  onPressed: () => _sendCommand('VolumeDown'),
-                  child: const Icon(Icons.volume_down),
-                  backgroundColor: Colors.amber[800],
-                ),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 SizedBox(width: 72),
+                // RokuButton(
+                //   onPressed: () => _sendCommand('Info'),
+                //   child: const Icon(Icons.bolt),
+                //   backgroundColor: Colors.purple[900],
+                // ),
                 RokuButton(
                   onPressed: () => _sendCommand('InstantReplay'),
                   child: const Icon(Icons.replay_10),
@@ -211,15 +206,32 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                 RokuButton(
                   onPressed: () => _sendCommand('Info'),
                   child: const Text('*', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  backgroundColor: Colors.purple[900],
                 ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
                 RokuButton(
                   onPressed: () => _sendCommand('VolumeMute'),
                   child: const Icon(Icons.volume_mute),
                   backgroundColor: Colors.amber[800],
                 ),
+                RokuButton(
+                  onPressed: () => _sendCommand('VolumeDown'),
+                  child: const Icon(Icons.volume_down),
+                  backgroundColor: Colors.amber[800],
+                ),
+                RokuButton(
+                  onPressed: () => _sendCommand('VolumeUp'),
+                  child: const Icon(Icons.volume_up),
+                  backgroundColor: Colors.amber[800],
+                ),
               ],
             ),
-            
+            SizedBox(height: 20),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -228,7 +240,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                   child: const Icon(Icons.arrow_upward),
                   backgroundColor: Colors.cyan[900],
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -251,7 +263,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 RokuButton(
                   onPressed: () => _sendCommand('Down'),
                   child: const Icon(Icons.arrow_downward),
@@ -259,6 +271,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                 ),
               ],
             ),
+            SizedBox(height: 20),
           ],
         ),
       ),
