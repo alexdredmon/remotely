@@ -165,114 +165,128 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
           }
           return KeyEventResult.ignored;
         },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                RokuButton(
-                  onPressed: () => _sendCommand('Back'),
-                  child: const Icon(Icons.west),
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            RokuButton(
+                              onPressed: () => _sendCommand('Back'),
+                              child: const Icon(Icons.west),
+                            ),
+                            RokuButton(onPressed: () => _sendCommand('Home'), child: const Icon(Icons.home)),
+                            RokuButton(
+                              onPressed: () => _showTextInputBottomSheet(context),
+                              child: const Text('abc', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            RokuButton(onPressed: () => _sendCommand('Rev'), child: const Icon(Icons.fast_rewind)),
+                            RokuButton(onPressed: () => _sendCommand('Play'), child: const Icon(Icons.play_arrow)),
+                            RokuButton(onPressed: () => _sendCommand('Fwd'), child: const Icon(Icons.fast_forward)),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(width: 72),
+                            RokuButton(
+                              onPressed: () => _sendCommand('InstantReplay'),
+                              child: const Icon(Icons.replay_10),
+                            ),
+                            RokuButton(
+                              onPressed: () => _sendCommand('Info'),
+                              child: const Text('*', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                              backgroundColor: Colors.brown[800],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            RokuButton(
+                              onPressed: () => _sendCommand('VolumeMute'),
+                              child: const Icon(Icons.volume_mute),
+                              backgroundColor: Colors.amber[800],
+                            ),
+                            RokuButton(
+                              onPressed: () => _sendCommand('VolumeDown'),
+                              child: const Icon(Icons.volume_down),
+                              backgroundColor: Colors.amber[800],
+                            ),
+                            RokuButton(
+                              onPressed: () => _sendCommand('VolumeUp'),
+                              child: const Icon(Icons.volume_up),
+                              backgroundColor: Colors.amber[800],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RokuButton(
+                              onPressed: () => _sendCommand('Up'),
+                              child: const Icon(Icons.arrow_upward),
+                              backgroundColor: Colors.cyan[900],
+                            ),
+                            SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                RokuButton(
+                                  onPressed: () => _sendCommand('Left'),
+                                  child: const Icon(Icons.arrow_back),
+                                  backgroundColor: Colors.cyan[900],
+                                ),
+                                SizedBox(width: 20),
+                                RokuButton(
+                                  onPressed: () => _sendCommand('Select'),
+                                  child: const Text('OK', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  backgroundColor: Colors.cyan[900],
+                                ),
+                                SizedBox(width: 20),
+                                RokuButton(
+                                  onPressed: () => _sendCommand('Right'),
+                                  child: const Icon(Icons.arrow_forward),
+                                  backgroundColor: Colors.cyan[900],
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20),
+                            RokuButton(
+                              onPressed: () => _sendCommand('Down'),
+                              child: const Icon(Icons.arrow_downward),
+                              backgroundColor: Colors.cyan[900],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                RokuButton(onPressed: () => _sendCommand('Home'), child: const Icon(Icons.home)),
-                RokuButton(
-                  onPressed: () => _showTextInputBottomSheet(context),
-                  child: const Text('abc', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                RokuButton(onPressed: () => _sendCommand('Rev'), child: const Icon(Icons.fast_rewind)),
-                RokuButton(onPressed: () => _sendCommand('Play'), child: const Icon(Icons.play_arrow)),
-                RokuButton(onPressed: () => _sendCommand('Fwd'), child: const Icon(Icons.fast_forward)),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SizedBox(width: 72),
-                // RokuButton(
-                //   onPressed: () => _sendCommand('Info'),
-                //   child: const Icon(Icons.bolt),
-                //   backgroundColor: Colors.purple[900],
-                // ),
-                RokuButton(
-                  onPressed: () => _sendCommand('InstantReplay'),
-                  child: const Icon(Icons.replay_10),
-                ),
-                RokuButton(
-                  onPressed: () => _sendCommand('Info'),
-                  child: const Text('*', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                  backgroundColor: Colors.purple[900],
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                RokuButton(
-                  onPressed: () => _sendCommand('VolumeMute'),
-                  child: const Icon(Icons.volume_mute),
-                  backgroundColor: Colors.amber[800],
-                ),
-                RokuButton(
-                  onPressed: () => _sendCommand('VolumeDown'),
-                  child: const Icon(Icons.volume_down),
-                  backgroundColor: Colors.amber[800],
-                ),
-                RokuButton(
-                  onPressed: () => _sendCommand('VolumeUp'),
-                  child: const Icon(Icons.volume_up),
-                  backgroundColor: Colors.amber[800],
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                RokuButton(
-                  onPressed: () => _sendCommand('Up'),
-                  child: const Icon(Icons.arrow_upward),
-                  backgroundColor: Colors.cyan[900],
-                ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    RokuButton(
-                      onPressed: () => _sendCommand('Left'),
-                      child: const Icon(Icons.arrow_back),
-                      backgroundColor: Colors.cyan[900],
-                    ),
-                    SizedBox(width: 20),
-                    RokuButton(
-                      onPressed: () => _sendCommand('Select'),
-                      child: const Text('OK', style: TextStyle(fontWeight: FontWeight.bold)),
-                      backgroundColor: Colors.cyan[900],
-                    ),
-                    SizedBox(width: 20),
-                    RokuButton(
-                      onPressed: () => _sendCommand('Right'),
-                      child: const Icon(Icons.arrow_forward),
-                      backgroundColor: Colors.cyan[900],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                RokuButton(
-                  onPressed: () => _sendCommand('Down'),
-                  child: const Icon(Icons.arrow_downward),
-                  backgroundColor: Colors.cyan[900],
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-          ],
+              ),
+            );
+          },
         ),
       ),
     );

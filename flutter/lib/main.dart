@@ -140,12 +140,31 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
   void _addDevice() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => AddDeviceScreen(
-          onDeviceAdded: (RokuDevice newDevice) {
+        builder: (context) => AddEditDeviceScreen(
+          onDeviceSaved: (RokuDevice newDevice) {
             setState(() {
               _devices.add(newDevice);
             });
             RokuService.addDevice(newDevice);
+          },
+        ),
+      ),
+    );
+  }
+
+  void _editDevice(RokuDevice device) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddEditDeviceScreen(
+          device: device,
+          onDeviceSaved: (RokuDevice updatedDevice) {
+            setState(() {
+              final index = _devices.indexWhere((d) => d.ip == device.ip && d.name == device.name);
+              if (index != -1) {
+                _devices[index] = updatedDevice;
+              }
+            });
+            RokuService.saveDeviceOrder(_devices);
           },
         ),
       ),
@@ -181,21 +200,31 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
           Expanded(
             child: _devices.isEmpty
                 ? Center(child: Text('No devices found'))
-                : ReorderableListView(
-                    onReorder: _reorderDevices,
-                    children: _devices.map((device) {
+                : ReorderableListView.builder(
+                    itemCount: _devices.length,
+                    itemBuilder: (context, index) {
+                      final device = _devices[index];
                       return ListTile(
                         key: ValueKey(device),
                         title: Text(device.name),
                         subtitle: Text(device.ip),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.delete, color: Colors.red[400]),
-                              onPressed: () => _confirmDeleteDevice(device),
+                        trailing: PopupMenuButton<String>(
+                          onSelected: (value) {
+                            if (value == 'edit') {
+                              _editDevice(device);
+                            } else if (value == 'delete') {
+                              _confirmDeleteDevice(device);
+                            }
+                          },
+                          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                            const PopupMenuItem<String>(
+                              value: 'edit',
+                              child: Text('Edit'),
                             ),
-                            Icon(Icons.drag_handle),
+                            const PopupMenuItem<String>(
+                              value: 'delete',
+                              child: Text('Delete'),
+                            ),
                           ],
                         ),
                         onTap: () {
@@ -207,7 +236,8 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                           );
                         },
                       );
-                    }).toList(),
+                    },
+                    onReorder: _reorderDevices,
                   ),
           ),
         ],
@@ -238,34 +268,43 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
   }
 }
 
-class AddDeviceScreen extends StatefulWidget {
-  final Function(RokuDevice) onDeviceAdded;
+class AddEditDeviceScreen extends StatefulWidget {
+  final Function(RokuDevice) onDeviceSaved;
+  final RokuDevice? device;
 
-  const AddDeviceScreen({Key? key, required this.onDeviceAdded}) : super(key: key);
+  const AddEditDeviceScreen({Key? key, required this.onDeviceSaved, this.device}) : super(key: key);
 
   @override
-  _AddDeviceScreenState createState() => _AddDeviceScreenState();
+  _AddEditDeviceScreenState createState() => _AddEditDeviceScreenState();
 }
 
-class _AddDeviceScreenState extends State<AddDeviceScreen> {
+class _AddEditDeviceScreenState extends State<AddEditDeviceScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _deviceName = '';
-  String _ipAddress = '';
+  late String _deviceName;
+  late String _ipAddress;
+
+  @override
+  void initState() {
+    super.initState();
+    _deviceName = widget.device?.name ?? '';
+    _ipAddress = widget.device?.ip ?? '';
+  }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      final newDevice = RokuDevice(_ipAddress, _deviceName);
-      widget.onDeviceAdded(newDevice);
+      final device = RokuDevice(_ipAddress, _deviceName);
+      widget.onDeviceSaved(device);
       Navigator.of(context).pop();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.device != null;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Device'),
+        title: Text(isEditing ? 'Edit Device' : 'Add Device'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -275,6 +314,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
+                initialValue: _deviceName,
                 decoration: InputDecoration(
                   labelText: 'Device Name',
                   hintText: 'Enter device name',
@@ -292,6 +332,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
               ),
               SizedBox(height: 16),
               TextFormField(
+                initialValue: _ipAddress,
                 decoration: InputDecoration(
                   labelText: 'IP Address',
                   hintText: 'Enter IP address',
@@ -311,7 +352,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
               SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _submitForm,
-                child: Text('Add Device', style: TextStyle(color: Colors.white)),
+                child: Text(isEditing ? 'Save Changes' : 'Add Device', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueGrey[800],
                   padding: EdgeInsets.symmetric(vertical: 16),
