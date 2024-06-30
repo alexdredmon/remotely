@@ -1,6 +1,6 @@
 {
-    "name": "remotely",
-    "short_name": "remotely",
+    "name": "Remotely",
+    "short_name": "Remotely",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

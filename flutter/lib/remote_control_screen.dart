@@ -211,8 +211,8 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                             ),
                             RokuButton(
                               onPressed: () => _sendCommand('Info'),
-                              child: const Text('*', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                              backgroundColor: Colors.brown[800],
+                              child: const Icon(Icons.settings),
+                              backgroundColor: Colors.cyan[900],
                             ),
                           ],
                         ),
@@ -224,17 +224,17 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                             RokuButton(
                               onPressed: () => _sendCommand('VolumeMute'),
                               child: const Icon(Icons.volume_mute),
-                              backgroundColor: Colors.amber[800],
+                              backgroundColor: Colors.amber[900],
                             ),
                             RokuButton(
                               onPressed: () => _sendCommand('VolumeDown'),
                               child: const Icon(Icons.volume_down),
-                              backgroundColor: Colors.amber[800],
+                              backgroundColor: Colors.amber[900],
                             ),
                             RokuButton(
                               onPressed: () => _sendCommand('VolumeUp'),
                               child: const Icon(Icons.volume_up),
-                              backgroundColor: Colors.amber[800],
+                              backgroundColor: Colors.amber[900],
                             ),
                           ],
                         ),
