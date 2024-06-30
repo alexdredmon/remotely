@@ -99,7 +99,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('❌ Confirm Delete'),
+          title: const Text('Confirm Delete'),
           content: Text('Are you sure you want to delete device ${device.name}?'),
           actions: <Widget>[
             TextButton(
@@ -201,13 +201,26 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
             child: _devices.isEmpty
                 ? Center(child: Text('No devices found'))
                 : ReorderableListView.builder(
+                    buildDefaultDragHandles: false,
                     itemCount: _devices.length,
                     itemBuilder: (context, index) {
                       final device = _devices[index];
                       return ListTile(
                         key: ValueKey(device),
-                        title: Text(device.name),
-                        subtitle: Text(device.ip),
+                        leading: ReorderableDragStartListener(
+                          index: index,
+                          child: Icon(Icons.drag_handle),
+                        ),
+                        title: Text('📺 ${device.name}'),
+                        subtitle: Padding(
+                          padding: EdgeInsets.only(),
+                          child: Text(
+                            '${device.ip}',
+                            style: TextStyle(
+                              color: Colors.pink[200],
+                            )
+                          ),
+                        ),
                         trailing: PopupMenuButton<String>(
                           onSelected: (value) {
                             if (value == 'edit') {

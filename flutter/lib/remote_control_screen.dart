@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
 import 'device_service.dart';
 import 'remote_button.dart';
 import 'macro_drawer.dart';
@@ -26,6 +27,8 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
   bool _isRecording = false;
   List<String> _recordedActions = [];
   String _currentMacroTitle = '';
+  Timer? _blinkTimer;
+  bool _isBlinkWhite = true;
 
   @override
   void initState() {
@@ -40,6 +43,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
   @override
   void dispose() {
     HardwareKeyboard.instance.removeHandler(_handleKeyPress);
+    _blinkTimer?.cancel();
     super.dispose();
   }
 
@@ -187,6 +191,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
         _recordedActions.clear();
         _currentMacroTitle = title;
       });
+      _startBlinking();
     }
   }
 
@@ -199,6 +204,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
       _recordedActions.clear();
       _currentMacroTitle = '';
     });
+    _stopBlinking();
     _showMacroDrawer();
   }
 
@@ -218,16 +224,46 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
     );
   }
 
+  void _startBlinking() {
+    _blinkTimer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+      setState(() {
+        _isBlinkWhite = !_isBlinkWhite;
+      });
+    });
+  }
+
+  void _stopBlinking() {
+    _blinkTimer?.cancel();
+    _blinkTimer = null;
+    setState(() {
+      _isBlinkWhite = true;
+    });
+  }
+
+  Widget _buildBlinkingStopButton() {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 250),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: _isBlinkWhite ? Colors.white : Colors.red,
+      ),
+      child: IconButton(
+        icon: Icon(
+          Icons.stop,
+          color: _isBlinkWhite ? Colors.red : Colors.white,
+        ),
+        onPressed: _stopRecording,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.device.name),
+        title: Text('📺 ${widget.device.name}'),
         leading: _isRecording
-            ? IconButton(
-                icon: Icon(Icons.stop),
-                onPressed: _stopRecording,
-              )
+            ? _buildBlinkingStopButton()
             : IconButton(
                 icon: Icon(Icons.west),
                 onPressed: () => Navigator.of(context).pop(),
