@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RemoteButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Widget child;
   final Color? backgroundColor;
   final Color? foregroundColor;

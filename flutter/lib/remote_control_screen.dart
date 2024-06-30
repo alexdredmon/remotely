@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'device_service.dart';
 import 'remote_button.dart';
+import 'macro_drawer.dart';
+import 'macro_service.dart';
 
 class RemoteControlScreen extends StatefulWidget {
   final TvDevice device;
@@ -15,8 +17,15 @@ class RemoteControlScreen extends StatefulWidget {
 class _RemoteControlScreenState extends State<RemoteControlScreen> {
   void _sendCommand(String command) {
     DeviceService.sendCommand(widget.device.ip, command);
-    print('Sent command: $command'); // Log the command
+    print('Sent command: $command');
+    if (_isRecording) {
+      _recordedActions.add(command);
+    }
   }
+
+  bool _isRecording = false;
+  List<String> _recordedActions = [];
+  String _currentMacroTitle = '';
 
   @override
   void initState() {
@@ -35,7 +44,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
   }
 
   bool _handleKeyPress(KeyEvent event) {
-    print('Key event detected: ${event.logicalKey}'); // Log all key events
+    print('Key event detected: ${event.logicalKey}');
 
     if (event is KeyDownEvent || event is KeyRepeatEvent) {
       if (event.physicalKey == PhysicalKeyboardKey.audioVolumeUp) {
@@ -107,6 +116,9 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                           Navigator.pop(context);
                           if (inputText.isNotEmpty) {
                             DeviceService.sendLiteralCommand(widget.device.ip, inputText);
+                            if (_isRecording) {
+                              _recordedActions.add('Literal_$inputText');
+                            }
                           }
                         },
                       ),
@@ -121,15 +133,105 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
     );
   }
 
+  void _startRecording() async {
+    String? title = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        String inputText = '';
+        return AlertDialog(
+          title: Text('New Macro'),
+          content: TextField(
+            autofocus: true,
+            decoration: InputDecoration(hintText: "Enter macro title"),
+            onChanged: (value) {
+              inputText = value;
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'CANCEL',
+                style: TextStyle(
+                  color: Colors.white,
+                )
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[800],
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              child: Text(
+                'OK',
+                style: TextStyle(
+                  color: Colors.white,
+                )
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.cyan[900],
+              ),
+              onPressed: () {
+                Navigator.pop(context, inputText);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (title != null && title.isNotEmpty) {
+      setState(() {
+        _isRecording = true;
+        _recordedActions.clear();
+        _currentMacroTitle = title;
+      });
+    }
+  }
+
+  void _stopRecording() async {
+    if (_recordedActions.isNotEmpty) {
+      await MacroService.saveMacro(Macro(title: _currentMacroTitle, actions: _recordedActions));
+    }
+    setState(() {
+      _isRecording = false;
+      _recordedActions.clear();
+      _currentMacroTitle = '';
+    });
+    _showMacroDrawer();
+  }
+
+  void _showMacroDrawer() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return MacroDrawer(
+          device: widget.device,
+          onStartRecording: () {
+            Navigator.pop(context);
+            _startRecording();
+          },
+        );
+      },
+      isScrollControlled: true,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.device.name),
-        leading: IconButton(
-          icon: Icon(Icons.west),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: _isRecording
+            ? IconButton(
+                icon: Icon(Icons.stop),
+                onPressed: _stopRecording,
+              )
+            : IconButton(
+                icon: Icon(Icons.west),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
         actions: [
           RemoteButton(
             onPressed: () => _sendCommand('Power'),
@@ -204,7 +306,11 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            SizedBox(width: 72),
+                            RemoteButton(
+                              onPressed: _isRecording ? null : _showMacroDrawer,
+                              child: const Icon(Icons.bolt),
+                              backgroundColor: Colors.cyan[900],
+                            ),
                             RemoteButton(
                               onPressed: () => _sendCommand('InstantReplay'),
                               child: const Icon(Icons.replay_10),
