@@ -92,7 +92,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                       ElevatedButton(
                         child: Text('CANCEL', style: TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[800],
+                          backgroundColor: Colors.red[800],
                         ),
                         onPressed: () {
                           Navigator.pop(context);
@@ -101,7 +101,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                       ElevatedButton(
                         child: Text('OK', style: TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueGrey[800],
+                          backgroundColor: Colors.cyan[900],
                         ),
                         onPressed: () {
                           Navigator.pop(context);
