@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'roku_service.dart';
+import 'device_service.dart';
 import 'remote_control_screen.dart';
 
 void main() {
@@ -54,7 +54,7 @@ class DeviceListScreen extends StatefulWidget {
 }
 
 class _DeviceListScreenState extends State<DeviceListScreen> {
-  List<RokuDevice> _devices = [];
+  List<TvDevice> _devices = [];
   bool _isLoading = false;
   String? _error;
 
@@ -66,7 +66,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
   }
 
   Future<void> _loadCachedDevices() async {
-    final cachedDevices = await RokuService.getCachedDevices();
+    final cachedDevices = await DeviceService.getCachedDevices();
     setState(() {
       _devices = cachedDevices;
     });
@@ -79,7 +79,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
     });
     try {
       print('Starting device discovery');
-      final devices = await RokuService.discoverDevices();
+      final devices = await DeviceService.discoverDevices();
       setState(() {
         _devices = devices;
         _isLoading = false;
@@ -94,7 +94,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
     }
   }
 
-  Future<void> _confirmDeleteDevice(RokuDevice device) async {
+  Future<void> _confirmDeleteDevice(TvDevice device) async {
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -130,8 +130,8 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
     }
   }
 
-  Future<void> _deleteDevice(RokuDevice device) async {
-    await RokuService.deleteDevice(device);
+  Future<void> _deleteDevice(TvDevice device) async {
+    await DeviceService.deleteDevice(device);
     setState(() {
       _devices.removeWhere((d) => d.ip == device.ip && d.name == device.name);
     });
@@ -141,30 +141,30 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => AddEditDeviceScreen(
-          onDeviceSaved: (RokuDevice newDevice) {
+          onDeviceSaved: (TvDevice newDevice) {
             setState(() {
               _devices.add(newDevice);
             });
-            RokuService.addDevice(newDevice);
+            DeviceService.addDevice(newDevice);
           },
         ),
       ),
     );
   }
 
-  void _editDevice(RokuDevice device) {
+  void _editDevice(TvDevice device) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => AddEditDeviceScreen(
           device: device,
-          onDeviceSaved: (RokuDevice updatedDevice) {
+          onDeviceSaved: (TvDevice updatedDevice) {
             setState(() {
               final index = _devices.indexWhere((d) => d.ip == device.ip && d.name == device.name);
               if (index != -1) {
                 _devices[index] = updatedDevice;
               }
             });
-            RokuService.saveDeviceOrder(_devices);
+            DeviceService.saveDeviceOrder(_devices);
           },
         ),
       ),
@@ -176,10 +176,10 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
       if (newIndex > oldIndex) {
         newIndex -= 1;
       }
-      final RokuDevice item = _devices.removeAt(oldIndex);
+      final TvDevice item = _devices.removeAt(oldIndex);
       _devices.insert(newIndex, item);
     });
-    RokuService.saveDeviceOrder(_devices);
+    DeviceService.saveDeviceOrder(_devices);
   }
 
   @override
@@ -269,8 +269,8 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
 }
 
 class AddEditDeviceScreen extends StatefulWidget {
-  final Function(RokuDevice) onDeviceSaved;
-  final RokuDevice? device;
+  final Function(TvDevice) onDeviceSaved;
+  final TvDevice? device;
 
   const AddEditDeviceScreen({Key? key, required this.onDeviceSaved, this.device}) : super(key: key);
 
@@ -293,7 +293,7 @@ class _AddEditDeviceScreenState extends State<AddEditDeviceScreen> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      final device = RokuDevice(_ipAddress, _deviceName);
+      final device = TvDevice(_ipAddress, _deviceName);
       widget.onDeviceSaved(device);
       Navigator.of(context).pop();
     }

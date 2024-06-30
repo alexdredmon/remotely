@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'roku_service.dart';
-import 'roku_button.dart';
+import 'device_service.dart';
+import 'remote_button.dart';
 
 class RemoteControlScreen extends StatefulWidget {
-  final RokuDevice device;
+  final TvDevice device;
 
   const RemoteControlScreen({super.key, required this.device});
 
@@ -14,7 +14,7 @@ class RemoteControlScreen extends StatefulWidget {
 
 class _RemoteControlScreenState extends State<RemoteControlScreen> {
   void _sendCommand(String command) {
-    RokuService.sendCommand(widget.device.ip, command);
+    DeviceService.sendCommand(widget.device.ip, command);
     print('Sent command: $command'); // Log the command
   }
 
@@ -106,7 +106,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                         onPressed: () {
                           Navigator.pop(context);
                           if (inputText.isNotEmpty) {
-                            RokuService.sendLiteralCommand(widget.device.ip, inputText);
+                            DeviceService.sendLiteralCommand(widget.device.ip, inputText);
                           }
                         },
                       ),
@@ -131,7 +131,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          RokuButton(
+          RemoteButton(
             onPressed: () => _sendCommand('Power'),
             child: const Icon(Icons.power_settings_new),
             isPowerButton: true,
@@ -178,12 +178,12 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            RokuButton(
+                            RemoteButton(
                               onPressed: () => _sendCommand('Back'),
                               child: const Icon(Icons.west),
                             ),
-                            RokuButton(onPressed: () => _sendCommand('Home'), child: const Icon(Icons.home)),
-                            RokuButton(
+                            RemoteButton(onPressed: () => _sendCommand('Home'), child: const Icon(Icons.home)),
+                            RemoteButton(
                               onPressed: () => _showTextInputBottomSheet(context),
                               child: const Text('abc', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                             ),
@@ -194,9 +194,9 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            RokuButton(onPressed: () => _sendCommand('Rev'), child: const Icon(Icons.fast_rewind)),
-                            RokuButton(onPressed: () => _sendCommand('Play'), child: const Icon(Icons.play_arrow)),
-                            RokuButton(onPressed: () => _sendCommand('Fwd'), child: const Icon(Icons.fast_forward)),
+                            RemoteButton(onPressed: () => _sendCommand('Rev'), child: const Icon(Icons.fast_rewind)),
+                            RemoteButton(onPressed: () => _sendCommand('Play'), child: const Icon(Icons.play_arrow)),
+                            RemoteButton(onPressed: () => _sendCommand('Fwd'), child: const Icon(Icons.fast_forward)),
                           ],
                         ),
                       ),
@@ -205,11 +205,11 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             SizedBox(width: 72),
-                            RokuButton(
+                            RemoteButton(
                               onPressed: () => _sendCommand('InstantReplay'),
                               child: const Icon(Icons.replay_10),
                             ),
-                            RokuButton(
+                            RemoteButton(
                               onPressed: () => _sendCommand('Info'),
                               child: const Icon(Icons.settings),
                               backgroundColor: Colors.cyan[900],
@@ -221,17 +221,17 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            RokuButton(
+                            RemoteButton(
                               onPressed: () => _sendCommand('VolumeMute'),
                               child: const Icon(Icons.volume_mute),
                               backgroundColor: Colors.amber[900],
                             ),
-                            RokuButton(
+                            RemoteButton(
                               onPressed: () => _sendCommand('VolumeDown'),
                               child: const Icon(Icons.volume_down),
                               backgroundColor: Colors.amber[900],
                             ),
-                            RokuButton(
+                            RemoteButton(
                               onPressed: () => _sendCommand('VolumeUp'),
                               child: const Icon(Icons.volume_up),
                               backgroundColor: Colors.amber[900],
@@ -244,7 +244,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            RokuButton(
+                            RemoteButton(
                               onPressed: () => _sendCommand('Up'),
                               child: const Icon(Icons.arrow_upward),
                               backgroundColor: Colors.cyan[900],
@@ -253,19 +253,19 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                RokuButton(
+                                RemoteButton(
                                   onPressed: () => _sendCommand('Left'),
                                   child: const Icon(Icons.arrow_back),
                                   backgroundColor: Colors.cyan[900],
                                 ),
                                 SizedBox(width: 20),
-                                RokuButton(
+                                RemoteButton(
                                   onPressed: () => _sendCommand('Select'),
                                   child: const Text('OK', style: TextStyle(fontWeight: FontWeight.bold)),
                                   backgroundColor: Colors.cyan[900],
                                 ),
                                 SizedBox(width: 20),
-                                RokuButton(
+                                RemoteButton(
                                   onPressed: () => _sendCommand('Right'),
                                   child: const Icon(Icons.arrow_forward),
                                   backgroundColor: Colors.cyan[900],
@@ -273,7 +273,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                               ],
                             ),
                             SizedBox(height: 20),
-                            RokuButton(
+                            RemoteButton(
                               onPressed: () => _sendCommand('Down'),
                               child: const Icon(Icons.arrow_downward),
                               backgroundColor: Colors.cyan[900],

@@ -1,7 +1,7 @@
 ![Remotely](/logo.png)
 # Remotely Controller
 
-Detect, add, save, and control the Roku devices on your network.
+Detect, add, save, and control Wifi enabled televisions on your network.
 
 ## Install
 
@@ -19,4 +19,3 @@ Detect, add, save, and control the Roku devices on your network.
   <img src="/flutter/assets/demo2.jpg" alt="CrayEye Demo 2" width="32%"/>
   <img src="/flutter/assets/demo3.jpg" alt="CrayEye Demo 3" width="32%"/>
 </p>
-
