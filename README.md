@@ -1,7 +1,7 @@
 ![Remotely](/logo.png)
 # Remotely Controller
 
-Detect, add, save, and control wifi enabled televisions on your network.
+Detect, add, save, and control televisions on your network.
 
 ## Install
 
