@@ -186,7 +186,28 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Device'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(width: 40),
+            Container(
+              width: 25,
+              height: 25,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: Image.asset(
+                  'assets/icon/remotely.png',
+                  width: 25,
+                  height: 25,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            SizedBox(width: 10),
+            Text('Devices'),
+            SizedBox(width: 40),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -211,13 +232,13 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                           index: index,
                           child: Icon(Icons.drag_handle),
                         ),
-                        title: Text('📺 ${device.name}'),
+                        title: Text('${device.name}'),
                         subtitle: Padding(
                           padding: EdgeInsets.only(),
                           child: Text(
                             '${device.ip}',
                             style: TextStyle(
-                              color: Colors.pink[200],
+                              color: Colors.purple[200],
                             )
                           ),
                         ),

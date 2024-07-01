@@ -261,7 +261,26 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('📺 ${widget.device.name}'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 25,
+              height: 25,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: Image.asset(
+                  'assets/icon/remotely.png',
+                  width: 25,
+                  height: 25,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            SizedBox(width: 10),
+            Text(widget.device.name),
+          ],
+        ),
         leading: _isRecording
             ? _buildBlinkingStopButton()
             : IconButton(
@@ -316,14 +335,22 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
+                            if (_isRecording)
+                              SizedBox(width: 74),
+                            if (!_isRecording)
+                              RemoteButton(
+                                onPressed: _showMacroDrawer,
+                                child: const Icon(Icons.bolt),
+                                backgroundColor: Colors.cyan[900],
+                              ),
                             RemoteButton(
-                              onPressed: () => _sendCommand('Back'),
-                              child: const Icon(Icons.west),
+                              onPressed: () => _sendCommand('InstantReplay'),
+                              child: const Icon(Icons.replay_10),
                             ),
-                            RemoteButton(onPressed: () => _sendCommand('Home'), child: const Icon(Icons.home)),
                             RemoteButton(
-                              onPressed: () => _showTextInputBottomSheet(context),
-                              child: const Text('abc', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                              onPressed: () => _sendCommand('Info'),
+                              child: const Icon(Icons.settings),
+                              backgroundColor: Colors.cyan[900],
                             ),
                           ],
                         ),
@@ -335,27 +362,6 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                             RemoteButton(onPressed: () => _sendCommand('Rev'), child: const Icon(Icons.fast_rewind)),
                             RemoteButton(onPressed: () => _sendCommand('Play'), child: const Icon(Icons.play_arrow)),
                             RemoteButton(onPressed: () => _sendCommand('Fwd'), child: const Icon(Icons.fast_forward)),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            RemoteButton(
-                              onPressed: _isRecording ? null : _showMacroDrawer,
-                              child: const Icon(Icons.bolt),
-                              backgroundColor: Colors.cyan[900],
-                            ),
-                            RemoteButton(
-                              onPressed: () => _sendCommand('InstantReplay'),
-                              child: const Icon(Icons.replay_10),
-                            ),
-                            RemoteButton(
-                              onPressed: () => _sendCommand('Info'),
-                              child: const Icon(Icons.settings),
-                              backgroundColor: Colors.cyan[900],
-                            ),
                           ],
                         ),
                       ),
@@ -377,6 +383,22 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                               onPressed: () => _sendCommand('VolumeUp'),
                               child: const Icon(Icons.volume_up),
                               backgroundColor: Colors.amber[900],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            RemoteButton(
+                              onPressed: () => _sendCommand('Back'),
+                              child: const Icon(Icons.west),
+                            ),
+                            RemoteButton(onPressed: () => _sendCommand('Home'), child: const Icon(Icons.home)),
+                            RemoteButton(
+                              onPressed: () => _showTextInputBottomSheet(context),
+                              child: const Text('abc', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                             ),
                           ],
                         ),
