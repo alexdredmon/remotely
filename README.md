@@ -1,7 +1,7 @@
 ![Remotely](/logo.png)
 # Remotely Controller
 
-Detect, add, save, and control Wifi enabled televisions on your network.
+Detect, add, save, and control wifi enabled televisions on your network.
 
 ## Install
 
@@ -15,7 +15,7 @@ Detect, add, save, and control Wifi enabled televisions on your network.
 ## Demo
 
 <p align="center">
-  <img src="/flutter/assets/demo1.jpg" alt="CrayEye Demo 1" width="32%"/>
   <img src="/flutter/assets/demo2.jpg" alt="CrayEye Demo 2" width="32%"/>
+  <img src="/flutter/assets/demo1.jpg" alt="CrayEye Demo 1" width="32%"/>
   <img src="/flutter/assets/demo3.jpg" alt="CrayEye Demo 3" width="32%"/>
 </p>
